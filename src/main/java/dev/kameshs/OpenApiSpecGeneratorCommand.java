@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -25,11 +24,10 @@ import picocli.CommandLine.ParentCommand;
 @Command(mixinStandardHelpOptions = true, description = "Generates OpenApiSpec JSON", name = "openapispec")
 public class OpenApiSpecGeneratorCommand implements Runnable {
 
-  final static Logger LOGGER = Logger.getLogger(
-      OpenApiSpecGeneratorCommand.class.getName());
+  final static Logger LOGGER = Logger.getLogger("crd-jsonschema-generator");
 
   @ParentCommand
-  private CrdToOpenAPIJSON parent;
+  private SchemaGeneratorCommand parent;
 
   @CommandLine.Option(names = {"-d",
       "--dir"}, description = "The CRDs Directory", required = true)
@@ -39,6 +37,7 @@ public class OpenApiSpecGeneratorCommand implements Runnable {
       "--out"}, description = "The Output Directory where OpenAPISpec JSON to be generated")
   File outDir;
 
+  @SuppressWarnings("unchecked")
   @Override
   public void run() {
     List<Path> crdFiles = Collections.emptyList();
@@ -46,7 +45,11 @@ public class OpenApiSpecGeneratorCommand implements Runnable {
     if (outDir == null) {
       outDir = new File(System.getProperty("user.dir"));
       if (!outDir.exists()) {
-        outDir.mkdirs();
+        if (outDir.mkdirs()) {
+          LOGGER.log(Level.INFO, "Created output directory %s",
+              outDir.getAbsolutePath());
+        }
+        ;
       }
     }
 

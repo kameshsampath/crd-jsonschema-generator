@@ -1,19 +1,17 @@
 package dev.kameshs;
 
+import io.quarkus.picocli.runtime.annotations.TopCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Spec;
 import picocli.CommandLine.Model.CommandSpec;
 
+@TopCommand
 @CommandLine.Command(name = "generate", mixinStandardHelpOptions = true, subcommands = {
     OpenApiSpecGeneratorCommand.class }, requiredOptionMarker = '*')
-public class CrdToOpenAPIJSON {
+public class SchemaGeneratorCommand implements Runnable {
 
-  @Spec
-  CommandSpec spec;
-
-  public static void main(String[] args) {
-    int exitCode = new CommandLine(new CrdToOpenAPIJSON()).execute(args);
-    System.exit(exitCode);
+  @Override
+  public void run() {
+    //Nothing here for now
   }
-
 }
