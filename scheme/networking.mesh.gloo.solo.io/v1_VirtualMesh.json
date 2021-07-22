@@ -1,0 +1,913 @@
+{
+  "definitions" : {
+    "networking.mesh.gloo.solo.io.v1.VirtualMesh" : {
+      "description" : "Represents a logical grouping of Meshes for shared configuration and cross-mesh interoperability.",
+      "properties" : {
+        "federation" : {
+          "description" : "Specify how to federate Destinations across service mesh boundaries.",
+          "oneOf" : [ {
+            "not" : {
+              "anyOf" : [ {
+                "required" : [ "permissive" ]
+              } ]
+            }
+          }, {
+            "required" : [ "permissive" ]
+          } ],
+          "properties" : {
+            "eastWestIngressGatewaySelectors" : {
+              "description" : "Selects the Destination(s) acting as ingress gateways for cross cluster traffic.\nThe supplied IngressGatewaySelectors will be used to select ingress gateways for all Meshes in this VirtualMesh.",
+              "items" : {
+                "properties" : {
+                  "destinationSelectors" : {
+                    "description" : "The set of Destinations that will be used as ingress gateways for external traffic entering the Mesh.\nIf omitted, a mesh-specific default ingress gateway destination will be used.\nFor Istio, any Kubernetes Service(s) with the label pair `{\"istio\": \"ingressgateway\"}` will be selected.",
+                    "items" : {
+                      "properties" : {
+                        "kubeServiceMatcher" : {
+                          "description" : "Match Kubernetes Services by their labels, namespaces, and/or clusters.",
+                          "properties" : {
+                            "clusters" : {
+                              "description" : "If specified, match Kubernetes Services if they exist in one of the specified clusters.\n           When used in a networking policy, omission matches any cluster.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any cluster.",
+                              "items" : {
+                                "type" : "string"
+                              },
+                              "type" : "array"
+                            },
+                            "labels" : {
+                              "additionalProperties" : {
+                                "type" : "string"
+                              },
+                              "description" : "If specified, a match requires all labels to exist on a Kubernetes Service.\n           When used in a networking policy, omission matches any labels.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any label key and/or value.",
+                              "type" : "object"
+                            },
+                            "namespaces" : {
+                              "description" : "If specified, match Kubernetes Services if they exist in one of the specified namespaces.\n           When used in a networking policy, omission matches any namespace.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any namespace.",
+                              "items" : {
+                                "type" : "string"
+                              },
+                              "type" : "array"
+                            }
+                          },
+                          "type" : "object"
+                        },
+                        "kubeServiceRefs" : {
+                          "description" : "Match Kubernetes Services by direct reference.",
+                          "properties" : {
+                            "services" : {
+                              "description" : "Match Kubernetes Services by direct reference. All fields are required.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any value for the given field.",
+                              "items" : {
+                                "properties" : {
+                                  "clusterName" : {
+                                    "description" : "name of the cluster in which the resource exists",
+                                    "type" : "string"
+                                  },
+                                  "name" : {
+                                    "description" : "name of the resource being referenced",
+                                    "type" : "string"
+                                  },
+                                  "namespace" : {
+                                    "description" : "namespace of the resource being referenced",
+                                    "type" : "string"
+                                  }
+                                },
+                                "type" : "object"
+                              },
+                              "type" : "array"
+                            }
+                          },
+                          "type" : "object"
+                        }
+                      },
+                      "type" : "object"
+                    },
+                    "type" : "array"
+                  },
+                  "portName" : {
+                    "description" : "Specify by name the TLS port on the ingress gateway destination. If not specified, will default to \"tls\".",
+                    "type" : "string"
+                  }
+                },
+                "type" : "object"
+              },
+              "type" : "array"
+            },
+            "flatNetwork" : {
+              "description" : "If true, all multicluster traffic will be routed directly to the Kubernetes service endpoints of the Destinations,\nrather than through an ingress gateway. This mode requires a flat network environment.\nThis feature is exclusive to Gloo Mesh Enterprise.",
+              "type" : "boolean"
+            },
+            "hostnameSuffix" : {
+              "description" : "Configure the suffix for hostnames of Destinations federated within this VirtualMesh.\nCurrently this is only supported for Istio with [smart DNS proxying enabled](https://istio.io/latest/blog/2020/dns-proxy/),\notherwise setting this field results in an error.\nIf omitted, the hostname suffix defaults to \"global\".",
+              "type" : "string"
+            },
+            "permissive" : {
+              "description" : "DEPRECATED: Use `selectors` with an empty selector (i.e. `{}`) for permissive semantics.\nExpose all Destinations to all Workloads in this VirtualMesh.",
+              "maxProperties" : 0,
+              "type" : "object"
+            },
+            "selectors" : {
+              "description" : "Selectively federate Destinations to specific external meshes.\nIf omitted, no Destinations will be federated.",
+              "items" : {
+                "properties" : {
+                  "destinationSelectors" : {
+                    "description" : "The set of Destinations that will be federated to external Meshes.\nIf omitted, all Destinations will be selected.",
+                    "items" : {
+                      "properties" : {
+                        "kubeServiceMatcher" : {
+                          "description" : "Match Kubernetes Services by their labels, namespaces, and/or clusters.",
+                          "properties" : {
+                            "clusters" : {
+                              "description" : "If specified, match Kubernetes Services if they exist in one of the specified clusters.\n           When used in a networking policy, omission matches any cluster.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any cluster.",
+                              "items" : {
+                                "type" : "string"
+                              },
+                              "type" : "array"
+                            },
+                            "labels" : {
+                              "additionalProperties" : {
+                                "type" : "string"
+                              },
+                              "description" : "If specified, a match requires all labels to exist on a Kubernetes Service.\n           When used in a networking policy, omission matches any labels.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any label key and/or value.",
+                              "type" : "object"
+                            },
+                            "namespaces" : {
+                              "description" : "If specified, match Kubernetes Services if they exist in one of the specified namespaces.\n           When used in a networking policy, omission matches any namespace.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any namespace.",
+                              "items" : {
+                                "type" : "string"
+                              },
+                              "type" : "array"
+                            }
+                          },
+                          "type" : "object"
+                        },
+                        "kubeServiceRefs" : {
+                          "description" : "Match Kubernetes Services by direct reference.",
+                          "properties" : {
+                            "services" : {
+                              "description" : "Match Kubernetes Services by direct reference. All fields are required.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any value for the given field.",
+                              "items" : {
+                                "properties" : {
+                                  "clusterName" : {
+                                    "description" : "name of the cluster in which the resource exists",
+                                    "type" : "string"
+                                  },
+                                  "name" : {
+                                    "description" : "name of the resource being referenced",
+                                    "type" : "string"
+                                  },
+                                  "namespace" : {
+                                    "description" : "namespace of the resource being referenced",
+                                    "type" : "string"
+                                  }
+                                },
+                                "type" : "object"
+                              },
+                              "type" : "array"
+                            }
+                          },
+                          "type" : "object"
+                        }
+                      },
+                      "type" : "object"
+                    },
+                    "type" : "array"
+                  },
+                  "meshes" : {
+                    "description" : "The Meshes to which the selected Destinations will be federated. All referenced Meshes must exist in this VirtualMesh.\nIf omitted, the selected Destinations will be federated to all Meshes in the VirtualMesh.",
+                    "items" : {
+                      "properties" : {
+                        "name" : {
+                          "description" : "name of the resource being referenced",
+                          "type" : "string"
+                        },
+                        "namespace" : {
+                          "description" : "namespace of the resource being referenced",
+                          "type" : "string"
+                        }
+                      },
+                      "type" : "object"
+                    },
+                    "type" : "array"
+                  }
+                },
+                "type" : "object"
+              },
+              "type" : "array"
+            },
+            "tcpKeepalive" : {
+              "description" : "Specify a keepalive rule for all requests made within the VirtualMesh which cross clusters within that VirtualMesh,\nas well as any requests to externalService type destinations.",
+              "properties" : {
+                "interval" : {
+                  "description" : "The time duration between keep-alive probes.\nFormat examples: `1h`/`1m`/`1s`/`1ms`",
+                  "type" : "string"
+                },
+                "probes" : {
+                  "description" : "Maximum number of TCP keepalive probes to send before determining that connection is dead.",
+                  "maximum" : 4.294967295E9,
+                  "minimum" : 0.0,
+                  "type" : "integer"
+                },
+                "time" : {
+                  "description" : "The time duration a connection needs to be idle before keep-alive probes start being sent.\nFormat examples: `1h`/`1m`/`1s`/`1ms`.",
+                  "type" : "string"
+                }
+              },
+              "type" : "object"
+            }
+          },
+          "type" : "object"
+        },
+        "globalAccessPolicy" : {
+          "description" : "Specify a global access policy for all Workloads and Destinations associated with this VirtualMesh.",
+          "enum" : [ "MESH_DEFAULT", "ENABLED", "DISABLED" ],
+          "type" : "string"
+        },
+        "meshes" : {
+          "description" : "Specify the Meshes configured by this VirtualMesh.",
+          "items" : {
+            "properties" : {
+              "name" : {
+                "description" : "name of the resource being referenced",
+                "type" : "string"
+              },
+              "namespace" : {
+                "description" : "namespace of the resource being referenced",
+                "type" : "string"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array"
+        },
+        "mtlsConfig" : {
+          "description" : "Specify mTLS options.",
+          "oneOf" : [ {
+            "not" : {
+              "anyOf" : [ {
+                "properties" : {
+                  "shared" : {
+                    "oneOf" : [ {
+                      "not" : {
+                        "anyOf" : [ {
+                          "properties" : {
+                            "rootCertificateAuthority" : {
+                              "oneOf" : [ {
+                                "not" : {
+                                  "anyOf" : [ {
+                                    "required" : [ "generated" ]
+                                  }, {
+                                    "required" : [ "secret" ]
+                                  } ]
+                                }
+                              }, {
+                                "required" : [ "generated" ]
+                              }, {
+                                "required" : [ "secret" ]
+                              } ]
+                            }
+                          },
+                          "required" : [ "rootCertificateAuthority" ]
+                        }, {
+                          "properties" : {
+                            "intermediateCertificateAuthority" : {
+                              "oneOf" : [ {
+                                "not" : {
+                                  "anyOf" : [ {
+                                    "properties" : {
+                                      "vault" : {
+                                        "oneOf" : [ {
+                                          "not" : {
+                                            "anyOf" : [ {
+                                              "required" : [ "tokenSecretRef" ]
+                                            }, {
+                                              "properties" : {
+                                                "kubernetesAuth" : {
+                                                  "oneOf" : [ {
+                                                    "not" : {
+                                                      "anyOf" : [ {
+                                                        "required" : [ "serviceAccountRef" ]
+                                                      }, {
+                                                        "required" : [ "mountedSaPath" ]
+                                                      } ]
+                                                    }
+                                                  }, {
+                                                    "required" : [ "serviceAccountRef" ]
+                                                  }, {
+                                                    "required" : [ "mountedSaPath" ]
+                                                  } ]
+                                                }
+                                              },
+                                              "required" : [ "kubernetesAuth" ]
+                                            } ]
+                                          }
+                                        }, {
+                                          "required" : [ "tokenSecretRef" ]
+                                        }, {
+                                          "properties" : {
+                                            "kubernetesAuth" : {
+                                              "oneOf" : [ {
+                                                "not" : {
+                                                  "anyOf" : [ {
+                                                    "required" : [ "serviceAccountRef" ]
+                                                  }, {
+                                                    "required" : [ "mountedSaPath" ]
+                                                  } ]
+                                                }
+                                              }, {
+                                                "required" : [ "serviceAccountRef" ]
+                                              }, {
+                                                "required" : [ "mountedSaPath" ]
+                                              } ]
+                                            }
+                                          },
+                                          "required" : [ "kubernetesAuth" ]
+                                        } ]
+                                      }
+                                    },
+                                    "required" : [ "vault" ]
+                                  } ]
+                                }
+                              }, {
+                                "properties" : {
+                                  "vault" : {
+                                    "oneOf" : [ {
+                                      "not" : {
+                                        "anyOf" : [ {
+                                          "required" : [ "tokenSecretRef" ]
+                                        }, {
+                                          "properties" : {
+                                            "kubernetesAuth" : {
+                                              "oneOf" : [ {
+                                                "not" : {
+                                                  "anyOf" : [ {
+                                                    "required" : [ "serviceAccountRef" ]
+                                                  }, {
+                                                    "required" : [ "mountedSaPath" ]
+                                                  } ]
+                                                }
+                                              }, {
+                                                "required" : [ "serviceAccountRef" ]
+                                              }, {
+                                                "required" : [ "mountedSaPath" ]
+                                              } ]
+                                            }
+                                          },
+                                          "required" : [ "kubernetesAuth" ]
+                                        } ]
+                                      }
+                                    }, {
+                                      "required" : [ "tokenSecretRef" ]
+                                    }, {
+                                      "properties" : {
+                                        "kubernetesAuth" : {
+                                          "oneOf" : [ {
+                                            "not" : {
+                                              "anyOf" : [ {
+                                                "required" : [ "serviceAccountRef" ]
+                                              }, {
+                                                "required" : [ "mountedSaPath" ]
+                                              } ]
+                                            }
+                                          }, {
+                                            "required" : [ "serviceAccountRef" ]
+                                          }, {
+                                            "required" : [ "mountedSaPath" ]
+                                          } ]
+                                        }
+                                      },
+                                      "required" : [ "kubernetesAuth" ]
+                                    } ]
+                                  }
+                                },
+                                "required" : [ "vault" ]
+                              } ]
+                            }
+                          },
+                          "required" : [ "intermediateCertificateAuthority" ]
+                        } ]
+                      }
+                    }, {
+                      "properties" : {
+                        "rootCertificateAuthority" : {
+                          "oneOf" : [ {
+                            "not" : {
+                              "anyOf" : [ {
+                                "required" : [ "generated" ]
+                              }, {
+                                "required" : [ "secret" ]
+                              } ]
+                            }
+                          }, {
+                            "required" : [ "generated" ]
+                          }, {
+                            "required" : [ "secret" ]
+                          } ]
+                        }
+                      },
+                      "required" : [ "rootCertificateAuthority" ]
+                    }, {
+                      "properties" : {
+                        "intermediateCertificateAuthority" : {
+                          "oneOf" : [ {
+                            "not" : {
+                              "anyOf" : [ {
+                                "properties" : {
+                                  "vault" : {
+                                    "oneOf" : [ {
+                                      "not" : {
+                                        "anyOf" : [ {
+                                          "required" : [ "tokenSecretRef" ]
+                                        }, {
+                                          "properties" : {
+                                            "kubernetesAuth" : {
+                                              "oneOf" : [ {
+                                                "not" : {
+                                                  "anyOf" : [ {
+                                                    "required" : [ "serviceAccountRef" ]
+                                                  }, {
+                                                    "required" : [ "mountedSaPath" ]
+                                                  } ]
+                                                }
+                                              }, {
+                                                "required" : [ "serviceAccountRef" ]
+                                              }, {
+                                                "required" : [ "mountedSaPath" ]
+                                              } ]
+                                            }
+                                          },
+                                          "required" : [ "kubernetesAuth" ]
+                                        } ]
+                                      }
+                                    }, {
+                                      "required" : [ "tokenSecretRef" ]
+                                    }, {
+                                      "properties" : {
+                                        "kubernetesAuth" : {
+                                          "oneOf" : [ {
+                                            "not" : {
+                                              "anyOf" : [ {
+                                                "required" : [ "serviceAccountRef" ]
+                                              }, {
+                                                "required" : [ "mountedSaPath" ]
+                                              } ]
+                                            }
+                                          }, {
+                                            "required" : [ "serviceAccountRef" ]
+                                          }, {
+                                            "required" : [ "mountedSaPath" ]
+                                          } ]
+                                        }
+                                      },
+                                      "required" : [ "kubernetesAuth" ]
+                                    } ]
+                                  }
+                                },
+                                "required" : [ "vault" ]
+                              } ]
+                            }
+                          }, {
+                            "properties" : {
+                              "vault" : {
+                                "oneOf" : [ {
+                                  "not" : {
+                                    "anyOf" : [ {
+                                      "required" : [ "tokenSecretRef" ]
+                                    }, {
+                                      "properties" : {
+                                        "kubernetesAuth" : {
+                                          "oneOf" : [ {
+                                            "not" : {
+                                              "anyOf" : [ {
+                                                "required" : [ "serviceAccountRef" ]
+                                              }, {
+                                                "required" : [ "mountedSaPath" ]
+                                              } ]
+                                            }
+                                          }, {
+                                            "required" : [ "serviceAccountRef" ]
+                                          }, {
+                                            "required" : [ "mountedSaPath" ]
+                                          } ]
+                                        }
+                                      },
+                                      "required" : [ "kubernetesAuth" ]
+                                    } ]
+                                  }
+                                }, {
+                                  "required" : [ "tokenSecretRef" ]
+                                }, {
+                                  "properties" : {
+                                    "kubernetesAuth" : {
+                                      "oneOf" : [ {
+                                        "not" : {
+                                          "anyOf" : [ {
+                                            "required" : [ "serviceAccountRef" ]
+                                          }, {
+                                            "required" : [ "mountedSaPath" ]
+                                          } ]
+                                        }
+                                      }, {
+                                        "required" : [ "serviceAccountRef" ]
+                                      }, {
+                                        "required" : [ "mountedSaPath" ]
+                                      } ]
+                                    }
+                                  },
+                                  "required" : [ "kubernetesAuth" ]
+                                } ]
+                              }
+                            },
+                            "required" : [ "vault" ]
+                          } ]
+                        }
+                      },
+                      "required" : [ "intermediateCertificateAuthority" ]
+                    } ]
+                  }
+                },
+                "required" : [ "shared" ]
+              }, {
+                "required" : [ "limited" ]
+              } ]
+            }
+          }, {
+            "properties" : {
+              "shared" : {
+                "oneOf" : [ {
+                  "not" : {
+                    "anyOf" : [ {
+                      "properties" : {
+                        "rootCertificateAuthority" : {
+                          "oneOf" : [ {
+                            "not" : {
+                              "anyOf" : [ {
+                                "required" : [ "generated" ]
+                              }, {
+                                "required" : [ "secret" ]
+                              } ]
+                            }
+                          }, {
+                            "required" : [ "generated" ]
+                          }, {
+                            "required" : [ "secret" ]
+                          } ]
+                        }
+                      },
+                      "required" : [ "rootCertificateAuthority" ]
+                    }, {
+                      "properties" : {
+                        "intermediateCertificateAuthority" : {
+                          "oneOf" : [ {
+                            "not" : {
+                              "anyOf" : [ {
+                                "properties" : {
+                                  "vault" : {
+                                    "oneOf" : [ {
+                                      "not" : {
+                                        "anyOf" : [ {
+                                          "required" : [ "tokenSecretRef" ]
+                                        }, {
+                                          "properties" : {
+                                            "kubernetesAuth" : {
+                                              "oneOf" : [ {
+                                                "not" : {
+                                                  "anyOf" : [ {
+                                                    "required" : [ "serviceAccountRef" ]
+                                                  }, {
+                                                    "required" : [ "mountedSaPath" ]
+                                                  } ]
+                                                }
+                                              }, {
+                                                "required" : [ "serviceAccountRef" ]
+                                              }, {
+                                                "required" : [ "mountedSaPath" ]
+                                              } ]
+                                            }
+                                          },
+                                          "required" : [ "kubernetesAuth" ]
+                                        } ]
+                                      }
+                                    }, {
+                                      "required" : [ "tokenSecretRef" ]
+                                    }, {
+                                      "properties" : {
+                                        "kubernetesAuth" : {
+                                          "oneOf" : [ {
+                                            "not" : {
+                                              "anyOf" : [ {
+                                                "required" : [ "serviceAccountRef" ]
+                                              }, {
+                                                "required" : [ "mountedSaPath" ]
+                                              } ]
+                                            }
+                                          }, {
+                                            "required" : [ "serviceAccountRef" ]
+                                          }, {
+                                            "required" : [ "mountedSaPath" ]
+                                          } ]
+                                        }
+                                      },
+                                      "required" : [ "kubernetesAuth" ]
+                                    } ]
+                                  }
+                                },
+                                "required" : [ "vault" ]
+                              } ]
+                            }
+                          }, {
+                            "properties" : {
+                              "vault" : {
+                                "oneOf" : [ {
+                                  "not" : {
+                                    "anyOf" : [ {
+                                      "required" : [ "tokenSecretRef" ]
+                                    }, {
+                                      "properties" : {
+                                        "kubernetesAuth" : {
+                                          "oneOf" : [ {
+                                            "not" : {
+                                              "anyOf" : [ {
+                                                "required" : [ "serviceAccountRef" ]
+                                              }, {
+                                                "required" : [ "mountedSaPath" ]
+                                              } ]
+                                            }
+                                          }, {
+                                            "required" : [ "serviceAccountRef" ]
+                                          }, {
+                                            "required" : [ "mountedSaPath" ]
+                                          } ]
+                                        }
+                                      },
+                                      "required" : [ "kubernetesAuth" ]
+                                    } ]
+                                  }
+                                }, {
+                                  "required" : [ "tokenSecretRef" ]
+                                }, {
+                                  "properties" : {
+                                    "kubernetesAuth" : {
+                                      "oneOf" : [ {
+                                        "not" : {
+                                          "anyOf" : [ {
+                                            "required" : [ "serviceAccountRef" ]
+                                          }, {
+                                            "required" : [ "mountedSaPath" ]
+                                          } ]
+                                        }
+                                      }, {
+                                        "required" : [ "serviceAccountRef" ]
+                                      }, {
+                                        "required" : [ "mountedSaPath" ]
+                                      } ]
+                                    }
+                                  },
+                                  "required" : [ "kubernetesAuth" ]
+                                } ]
+                              }
+                            },
+                            "required" : [ "vault" ]
+                          } ]
+                        }
+                      },
+                      "required" : [ "intermediateCertificateAuthority" ]
+                    } ]
+                  }
+                }, {
+                  "properties" : {
+                    "rootCertificateAuthority" : {
+                      "oneOf" : [ {
+                        "not" : {
+                          "anyOf" : [ {
+                            "required" : [ "generated" ]
+                          }, {
+                            "required" : [ "secret" ]
+                          } ]
+                        }
+                      }, {
+                        "required" : [ "generated" ]
+                      }, {
+                        "required" : [ "secret" ]
+                      } ]
+                    }
+                  },
+                  "required" : [ "rootCertificateAuthority" ]
+                }, {
+                  "properties" : {
+                    "intermediateCertificateAuthority" : {
+                      "oneOf" : [ {
+                        "not" : {
+                          "anyOf" : [ {
+                            "properties" : {
+                              "vault" : {
+                                "oneOf" : [ {
+                                  "not" : {
+                                    "anyOf" : [ {
+                                      "required" : [ "tokenSecretRef" ]
+                                    }, {
+                                      "properties" : {
+                                        "kubernetesAuth" : {
+                                          "oneOf" : [ {
+                                            "not" : {
+                                              "anyOf" : [ {
+                                                "required" : [ "serviceAccountRef" ]
+                                              }, {
+                                                "required" : [ "mountedSaPath" ]
+                                              } ]
+                                            }
+                                          }, {
+                                            "required" : [ "serviceAccountRef" ]
+                                          }, {
+                                            "required" : [ "mountedSaPath" ]
+                                          } ]
+                                        }
+                                      },
+                                      "required" : [ "kubernetesAuth" ]
+                                    } ]
+                                  }
+                                }, {
+                                  "required" : [ "tokenSecretRef" ]
+                                }, {
+                                  "properties" : {
+                                    "kubernetesAuth" : {
+                                      "oneOf" : [ {
+                                        "not" : {
+                                          "anyOf" : [ {
+                                            "required" : [ "serviceAccountRef" ]
+                                          }, {
+                                            "required" : [ "mountedSaPath" ]
+                                          } ]
+                                        }
+                                      }, {
+                                        "required" : [ "serviceAccountRef" ]
+                                      }, {
+                                        "required" : [ "mountedSaPath" ]
+                                      } ]
+                                    }
+                                  },
+                                  "required" : [ "kubernetesAuth" ]
+                                } ]
+                              }
+                            },
+                            "required" : [ "vault" ]
+                          } ]
+                        }
+                      }, {
+                        "properties" : {
+                          "vault" : {
+                            "oneOf" : [ {
+                              "not" : {
+                                "anyOf" : [ {
+                                  "required" : [ "tokenSecretRef" ]
+                                }, {
+                                  "properties" : {
+                                    "kubernetesAuth" : {
+                                      "oneOf" : [ {
+                                        "not" : {
+                                          "anyOf" : [ {
+                                            "required" : [ "serviceAccountRef" ]
+                                          }, {
+                                            "required" : [ "mountedSaPath" ]
+                                          } ]
+                                        }
+                                      }, {
+                                        "required" : [ "serviceAccountRef" ]
+                                      }, {
+                                        "required" : [ "mountedSaPath" ]
+                                      } ]
+                                    }
+                                  },
+                                  "required" : [ "kubernetesAuth" ]
+                                } ]
+                              }
+                            }, {
+                              "required" : [ "tokenSecretRef" ]
+                            }, {
+                              "properties" : {
+                                "kubernetesAuth" : {
+                                  "oneOf" : [ {
+                                    "not" : {
+                                      "anyOf" : [ {
+                                        "required" : [ "serviceAccountRef" ]
+                                      }, {
+                                        "required" : [ "mountedSaPath" ]
+                                      } ]
+                                    }
+                                  }, {
+                                    "required" : [ "serviceAccountRef" ]
+                                  }, {
+                                    "required" : [ "mountedSaPath" ]
+                                  } ]
+                                }
+                              },
+                              "required" : [ "kubernetesAuth" ]
+                            } ]
+                          }
+                        },
+                        "required" : [ "vault" ]
+                      } ]
+                    }
+                  },
+                  "required" : [ "intermediateCertificateAuthority" ]
+                } ]
+              }
+            },
+            "required" : [ "shared" ]
+          }, {
+            "required" : [ "limited" ]
+          } ],
+          "properties" : {
+            "autoRestartPods" : {
+              "description" : "Specify whether to allow Gloo Mesh to restart Kubernetes Pods when certificates are rotated when establishing shared trust.\nIf this option is not explicitly enabled,\nusers must restart Pods manually for the new certificates to be picked up.\n`meshctl` provides the command `meshctl mesh restart` to simplify this process, see [here]({{< versioned_link_path fromRoot=\"reference/cli/meshctl_mesh_restart/\" >}}) for more info.",
+              "type" : "boolean"
+            },
+            "limited" : {
+              "description" : "Limited trust (selectively allow communication between Workloads and Destinations in the grouped Meshes). *Currently not available.*",
+              "type" : "object"
+            },
+            "shared" : {
+              "description" : "Shared trust (allow communication between any pair of Workloads and Destinations in the grouped Meshes).",
+              "properties" : {
+                "intermediateCertOptions" : {
+                  "description" : "Configuration options for generated intermediate certs.",
+                  "properties" : {
+                    "orgName" : {
+                      "description" : "Root cert organization name. Defaults to \"gloo-mesh\".",
+                      "type" : "string"
+                    },
+                    "rsaKeySizeBytes" : {
+                      "description" : "Size in bytes of the root cert's private key. Defaults to 4096.",
+                      "maximum" : 4.294967295E9,
+                      "minimum" : 0.0,
+                      "type" : "integer"
+                    },
+                    "secretRotationGracePeriodRatio" : {
+                      "description" : "The ratio of cert lifetime to refresh a cert. For example, at 0.10 and 1 hour TTL,\nwe would refresh 6 minutes before expiration",
+                      "format" : "float",
+                      "type" : "number"
+                    },
+                    "ttlDays" : {
+                      "description" : "Number of days before root cert expires. Defaults to 365.",
+                      "maximum" : 4.294967295E9,
+                      "minimum" : 0.0,
+                      "type" : "integer"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "intermediateCertificateAuthority" : {
+                  "description" : "Configures an Intermediate Certificiate Authority which remote clusters will use to generate intermediate\ncertificates. In order for this to properly mesh all of the traffic across the different meshes, the CA\nbeing used must be configured to generate the intermediate certificates.",
+                  "properties" : {
+                    "vault" : {
+                      "description" : "Use vault as the intermediate CA source",
+                      "properties" : {
+                        "caBundle" : {
+                          "description" : "PEM encoded CA bundle used to validate Vault server certificate. Only used\nif the Server URL is using HTTPS protocol. This parameter is ignored for\nplain HTTP protocol connection. If not set the system root certificates\nare used to validate the TLS connection.",
+                          "format" : "binary",
+                          "type" : "string"
+                        },
+                        "caPath" : {
+                          "description" : "`ca_path` is the mount path of the Vault PKI backend's `sign` endpoint, e.g:\n\"my_pki_mount/sign/my-role-name\".",
+                          "type" : "string"
+                        },
+                        "csrPath" : {
+                          "description" : "`csr_path` is the mount path of the Vault PKI backend's `generate` endpoint, e.g:\n\"my_pki_mount/intermediate/generate/exported\".\n\"exported\" is necessary here as istio needs access to the private key\nSee vault docs here: https://www.vaultproject.io/api-docs/secret/pki#parameters-4",
+                          "type" : "string"
+                        },
+                        "kubernetesAuth" : {
+                          "description" : "Kubernetes authenticates with Vault by passing the ServiceAccount\ntoken stored in the named Secret resource to the Vault server.",
+                          "properties" : {
+                            "mountPath" : {
+                              "description" : "The Vault mountPath here is the mount path to use when authenticating with\nVault. For example, setting a value to `/v1/auth/foo`, will use the path\n`/v1/auth/foo/login` to authenticate with Vault. If unspecified, the\ndefault value \"/v1/auth/kubernetes\" will be used.",
+                              "type" : "string"
+                            },
+                            "mountedSaPath" : {
+                              "description" : "File System path to grab the service account token from.\nDefaults to /var/run/secrets/kubernetes.io/serviceaccount",
+                              "type" : "string"
+                            },
+                            "role" : {
+                              "description" : "A required field containing the Vault Role to assume. A Role binds a\nKubernetes ServiceAccount with a set of Vault policies.",
+                              "type" : "string"
+                            },
+                            "secretTokenKey" : {
+                              "description" : "Key to search for the sa_token\nDefault to \"token\"",
+                              "type" : "string"
+                            },
+                            "serviceAccountRef" : {
+                              "description" : "Reference to service account, other than the one mounted to the current pod.",
+                              "properties" : {
+                                "name" : {
+                                  "description" : "name of the resource being referenced",
+                                  "type" : "string"
+                                },
+                                "namespace" : {
+                                  "description" : "namespace of the resource being referenced",
+                                  "type" : "string"
+                                }
+                              },
+                              "type" : "object"
+                            }
+                          },
+                          "type" : "object"
+                        },
+                        "namespace" : {
+                          "description" : "Name of the vault namespace. Namespaces is a set o

@@ -1,0 +1,459 @@
+{
+  "definitions" : {
+    "rbac.enterprise.mesh.gloo.solo.io.v1.Role" : {
+      "description" : "A role represents a set of permissions for creating, updating, and deleting Gloo Mesh configuration objects.\n   A role consists of a set of scopes for each policy type. Depending on the policy type,\n   the permission granularity is defined at the field level or at the object level.",
+      "properties" : {
+        "accessLogRecordScopes" : {
+          "description" : "A set of AccessLogRecord configuration permissions. Permission granularity is defined at the object level.",
+          "items" : {
+            "properties" : {
+              "workloadSelectors" : {
+                "description" : "A list of permitted Workload selectors.",
+                "items" : {
+                  "properties" : {
+                    "kubeWorkloadMatcher" : {
+                      "description" : "Match Kubernetes workloads by their labels, namespaces, and/or clusters.",
+                      "properties" : {
+                        "clusters" : {
+                          "description" : "If specified, match Kubernetes workloads if they exist in one of the specified clusters.\n           When used in a networking policy, omission matches any cluster.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any cluster.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        },
+                        "labels" : {
+                          "additionalProperties" : {
+                            "type" : "string"
+                          },
+                          "description" : "If specified, all labels must exist on Kubernetes workload.\n       When used in a networking policy, omission matches any labels.\n       When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any label key and/or value.",
+                          "type" : "object"
+                        },
+                        "namespaces" : {
+                          "description" : "If specified, match Kubernetes workloads if they exist in one of the specified namespaces.\n           When used in a networking policy, omission matches any namespace.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any namespace.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        }
+                      },
+                      "type" : "object"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "type" : "array"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array"
+        },
+        "accessPolicyScopes" : {
+          "description" : "A set of AccessPolicy configuration permissions. Permission granularity is defined at the object level.",
+          "items" : {
+            "properties" : {
+              "destinationSelectors" : {
+                "description" : "A list of permitted Destination selectors.",
+                "items" : {
+                  "properties" : {
+                    "kubeServiceMatcher" : {
+                      "description" : "Match Kubernetes Services by their labels, namespaces, and/or clusters.",
+                      "properties" : {
+                        "clusters" : {
+                          "description" : "If specified, match Kubernetes Services if they exist in one of the specified clusters.\n           When used in a networking policy, omission matches any cluster.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any cluster.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        },
+                        "labels" : {
+                          "additionalProperties" : {
+                            "type" : "string"
+                          },
+                          "description" : "If specified, a match requires all labels to exist on a Kubernetes Service.\n           When used in a networking policy, omission matches any labels.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any label key and/or value.",
+                          "type" : "object"
+                        },
+                        "namespaces" : {
+                          "description" : "If specified, match Kubernetes Services if they exist in one of the specified namespaces.\n           When used in a networking policy, omission matches any namespace.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any namespace.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        }
+                      },
+                      "type" : "object"
+                    },
+                    "kubeServiceRefs" : {
+                      "description" : "Match Kubernetes Services by direct reference.",
+                      "properties" : {
+                        "services" : {
+                          "description" : "Match Kubernetes Services by direct reference. All fields are required.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any value for the given field.",
+                          "items" : {
+                            "properties" : {
+                              "clusterName" : {
+                                "description" : "name of the cluster in which the resource exists",
+                                "type" : "string"
+                              },
+                              "name" : {
+                                "description" : "name of the resource being referenced",
+                                "type" : "string"
+                              },
+                              "namespace" : {
+                                "description" : "namespace of the resource being referenced",
+                                "type" : "string"
+                              }
+                            },
+                            "type" : "object"
+                          },
+                          "type" : "array"
+                        }
+                      },
+                      "type" : "object"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "type" : "array"
+              },
+              "identitySelectors" : {
+                "description" : "A list of permitted identity selectors.",
+                "items" : {
+                  "properties" : {
+                    "kubeIdentityMatcher" : {
+                      "description" : "Match request identities based on the Kubernetes namespace and cluster.",
+                      "properties" : {
+                        "clusters" : {
+                          "description" : "If specified, match a Kubernetes identity if it exists in one of the specified clusters.\n           When used in a networking policy, omission matches any cluster.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any cluster.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        },
+                        "namespaces" : {
+                          "description" : "If specified, match a Kubernetes identity if it exists in one of the specified namespaces.\n           When used in a networking policy, omission matches any namespace.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any namespace.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        }
+                      },
+                      "type" : "object"
+                    },
+                    "kubeServiceAccountRefs" : {
+                      "description" : "Match request identities based on the Kubernetes service account of the request.",
+                      "properties" : {
+                        "serviceAccounts" : {
+                          "description" : "Match Kubernetes service accounts by direct reference.\n           When used in a networking policy, omission of any field (name, namespace, or clusterName) allows matching any value for that field.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any value for the given field.",
+                          "items" : {
+                            "properties" : {
+                              "clusterName" : {
+                                "description" : "name of the cluster in which the resource exists",
+                                "type" : "string"
+                              },
+                              "name" : {
+                                "description" : "name of the resource being referenced",
+                                "type" : "string"
+                              },
+                              "namespace" : {
+                                "description" : "namespace of the resource being referenced",
+                                "type" : "string"
+                              }
+                            },
+                            "type" : "object"
+                          },
+                          "type" : "array"
+                        }
+                      },
+                      "type" : "object"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "type" : "array"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array"
+        },
+        "trafficPolicyScopes" : {
+          "description" : "A set of TrafficPolicy configuration permissions. Permission granularity is defined at the field level.",
+          "items" : {
+            "properties" : {
+              "destinationSelectors" : {
+                "description" : "A list of permitted Destination selectors.",
+                "items" : {
+                  "properties" : {
+                    "kubeServiceMatcher" : {
+                      "description" : "Match Kubernetes Services by their labels, namespaces, and/or clusters.",
+                      "properties" : {
+                        "clusters" : {
+                          "description" : "If specified, match Kubernetes Services if they exist in one of the specified clusters.\n           When used in a networking policy, omission matches any cluster.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any cluster.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        },
+                        "labels" : {
+                          "additionalProperties" : {
+                            "type" : "string"
+                          },
+                          "description" : "If specified, a match requires all labels to exist on a Kubernetes Service.\n           When used in a networking policy, omission matches any labels.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any label key and/or value.",
+                          "type" : "object"
+                        },
+                        "namespaces" : {
+                          "description" : "If specified, match Kubernetes Services if they exist in one of the specified namespaces.\n           When used in a networking policy, omission matches any namespace.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any namespace.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        }
+                      },
+                      "type" : "object"
+                    },
+                    "kubeServiceRefs" : {
+                      "description" : "Match Kubernetes Services by direct reference.",
+                      "properties" : {
+                        "services" : {
+                          "description" : "Match Kubernetes Services by direct reference. All fields are required.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any value for the given field.",
+                          "items" : {
+                            "properties" : {
+                              "clusterName" : {
+                                "description" : "name of the cluster in which the resource exists",
+                                "type" : "string"
+                              },
+                              "name" : {
+                                "description" : "name of the resource being referenced",
+                                "type" : "string"
+                              },
+                              "namespace" : {
+                                "description" : "namespace of the resource being referenced",
+                                "type" : "string"
+                              }
+                            },
+                            "type" : "object"
+                          },
+                          "type" : "array"
+                        }
+                      },
+                      "type" : "object"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "type" : "array"
+              },
+              "trafficPolicyActions" : {
+                "description" : "A list of permitted TrafficPolicy configuration actions.",
+                "items" : {
+                  "enum" : [ "UNKNOWN_TRAFFIC_POLICY_ACTION", "ALL", "TRAFFIC_SHIFT", "FAULT_INJECTION", "REQUEST_TIMEOUT", "RETRIES", "CORS_POLICY", "MIRROR", "HEADER_MANIPULATION", "OUTLIER_DETECTION", "MTLS_CONFIG" ],
+                  "type" : "string"
+                },
+                "type" : "array"
+              },
+              "workloadSelectors" : {
+                "description" : "A list of permitted Workload selectors.",
+                "items" : {
+                  "properties" : {
+                    "kubeWorkloadMatcher" : {
+                      "description" : "Match Kubernetes workloads by their labels, namespaces, and/or clusters.",
+                      "properties" : {
+                        "clusters" : {
+                          "description" : "If specified, match Kubernetes workloads if they exist in one of the specified clusters.\n           When used in a networking policy, omission matches any cluster.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any cluster.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        },
+                        "labels" : {
+                          "additionalProperties" : {
+                            "type" : "string"
+                          },
+                          "description" : "If specified, all labels must exist on Kubernetes workload.\n       When used in a networking policy, omission matches any labels.\n       When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any label key and/or value.",
+                          "type" : "object"
+                        },
+                        "namespaces" : {
+                          "description" : "If specified, match Kubernetes workloads if they exist in one of the specified namespaces.\n           When used in a networking policy, omission matches any namespace.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any namespace.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        }
+                      },
+                      "type" : "object"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "type" : "array"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array"
+        },
+        "virtualDestinationScopes" : {
+          "description" : "A set of VirtualDestination configuration permissions. Permission granularity is defined at the object level.",
+          "items" : {
+            "properties" : {
+              "destinationSelectors" : {
+                "description" : "A list of permitted backing service selectors.",
+                "items" : {
+                  "properties" : {
+                    "kubeServiceMatcher" : {
+                      "description" : "Match Kubernetes Services by their labels, namespaces, and/or clusters.",
+                      "properties" : {
+                        "clusters" : {
+                          "description" : "If specified, match Kubernetes Services if they exist in one of the specified clusters.\n           When used in a networking policy, omission matches any cluster.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any cluster.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        },
+                        "labels" : {
+                          "additionalProperties" : {
+                            "type" : "string"
+                          },
+                          "description" : "If specified, a match requires all labels to exist on a Kubernetes Service.\n           When used in a networking policy, omission matches any labels.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any label key and/or value.",
+                          "type" : "object"
+                        },
+                        "namespaces" : {
+                          "description" : "If specified, match Kubernetes Services if they exist in one of the specified namespaces.\n           When used in a networking policy, omission matches any namespace.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any namespace.",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        }
+                      },
+                      "type" : "object"
+                    },
+                    "kubeServiceRefs" : {
+                      "description" : "Match Kubernetes Services by direct reference.",
+                      "properties" : {
+                        "services" : {
+                          "description" : "Match Kubernetes Services by direct reference. All fields are required.\n           When used in a Gloo Mesh Role, a wildcard (`\"*\"`) must be specified to match any value for the given field.",
+                          "items" : {
+                            "properties" : {
+                              "clusterName" : {
+                                "description" : "name of the cluster in which the resource exists",
+                                "type" : "string"
+                              },
+                              "name" : {
+                                "description" : "name of the resource being referenced",
+                                "type" : "string"
+                              },
+                              "namespace" : {
+                                "description" : "namespace of the resource being referenced",
+                                "type" : "string"
+                              }
+                            },
+                            "type" : "object"
+                          },
+                          "type" : "array"
+                        }
+                      },
+                      "type" : "object"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "type" : "array"
+              },
+              "destinations" : {
+                "description" : "A list of permitted backing Destinations.",
+                "items" : {
+                  "oneOf" : [ {
+                    "not" : {
+                      "anyOf" : [ {
+                        "required" : [ "kubeService" ]
+                      } ]
+                    }
+                  }, {
+                    "required" : [ "kubeService" ]
+                  } ],
+                  "properties" : {
+                    "kubeService" : {
+                      "description" : "Reference to a Kubernetes Service.",
+                      "properties" : {
+                        "clusterName" : {
+                          "description" : "name of the cluster in which the resource exists",
+                          "type" : "string"
+                        },
+                        "name" : {
+                          "description" : "name of the resource being referenced",
+                          "type" : "string"
+                        },
+                        "namespace" : {
+                          "description" : "namespace of the resource being referenced",
+                          "type" : "string"
+                        }
+                      },
+                      "type" : "object"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "type" : "array"
+              },
+              "meshRefs" : {
+                "description" : "A list of permitted mesh references.",
+                "items" : {
+                  "properties" : {
+                    "name" : {
+                      "description" : "name of the resource being referenced",
+                      "type" : "string"
+                    },
+                    "namespace" : {
+                      "description" : "namespace of the resource being referenced",
+                      "type" : "string"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "type" : "array"
+              },
+              "virtualMeshRefs" : {
+                "description" : "A list of permitted virtual mesh references.",
+                "items" : {
+                  "properties" : {
+                    "name" : {
+                      "description" : "name of the resource being referenced",
+                      "type" : "string"
+                    },
+                    "namespace" : {
+                      "description" : "namespace of the resource being referenced",
+                      "type" : "string"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "type" : "array"
+              }
+            },
+            "type" : "object"
+          },
+          "type" : "array"
+        },
+        "virtualMeshScopes" : {
+          "description" : "A set of VirtualMesh configuration permissions. Permission granularity is defined at the field level.",
+          "items" : {
+            "properties" : {
+              "meshRefs" : {
+                "description" : "A list of permitted mesh references.",
+                "items" : {
+                  "properties" : {
+                    "name" : {
+                      "description" : "name of the resource being referenced",
+                      "type" : "string"
+                    },
+                    "namespace" : {
+                      "description" : "namespace of the resource being referenced",
+                      "type" : "string"
+                    }
+                  },
+                  "type" : "object"
+                },
+                "type" : "array"
+              },
+              "virtualMeshActions" : {
+                "description" : "A list of permitted

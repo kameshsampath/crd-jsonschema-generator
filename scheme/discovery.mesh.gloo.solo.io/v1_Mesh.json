@@ -1,0 +1,167 @@
+{
+  "definitions" : {
+    "discovery.mesh.gloo.solo.io.v1.Mesh" : {
+      "description" : "Describes a service mesh control plane deployment.",
+      "properties" : {
+        "agentInfo" : {
+          "description" : "Describes the Gloo Mesh agent if it has been installed to the managed cluster.",
+          "properties" : {
+            "agentNamespace" : {
+              "description" : "The namespace in which the Gloo Mesh agent is installed.",
+              "type" : "string"
+            }
+          },
+          "type" : "object"
+        },
+        "awsAppMesh" : {
+          "description" : "Describes an [AWS App Mesh](https://aws.amazon.com/app-mesh/) service mesh.",
+          "properties" : {
+            "arn" : {
+              "description" : "The unique AWS ARN associated with the App Mesh instance.",
+              "type" : "string"
+            },
+            "awsAccountId" : {
+              "description" : "The AWS Account ID associated with the Mesh. Populated at REST API registration time.",
+              "type" : "string"
+            },
+            "awsName" : {
+              "description" : "The AWS name for the App Mesh instance, must be unique across all AppMesh instances owned by the AWS account.",
+              "type" : "string"
+            },
+            "clusters" : {
+              "description" : "The Kubernetes clusters on which sidecars for this App Mesh instance have been discovered.",
+              "items" : {
+                "type" : "string"
+              },
+              "type" : "array"
+            },
+            "region" : {
+              "description" : "The AWS region the App Mesh control plane resources exist in.",
+              "type" : "string"
+            }
+          },
+          "type" : "object"
+        },
+        "consulConnect" : {
+          "description" : "Describes a [Consul Connect](https://www.consul.io/docs/connect) service mesh.",
+          "properties" : {
+            "installation" : {
+              "description" : "Describes the ConsulConnect control plane deployment.",
+              "properties" : {
+                "cluster" : {
+                  "description" : "The Gloo Mesh cluster in which the control plane has been installed.",
+                  "type" : "string"
+                },
+                "namespace" : {
+                  "description" : "Namespace in which the control plane has been installed.",
+                  "type" : "string"
+                },
+                "podLabels" : {
+                  "additionalProperties" : {
+                    "type" : "string"
+                  },
+                  "description" : "The labels on the control plane pods (read from the deployment).",
+                  "type" : "object"
+                },
+                "region" : {
+                  "description" : "The region of the cluster in which the control plane has been installed, which is\ndetermined from the value of the [Kubernetes region topology label](https://kubernetes.io/docs/reference/labels-annotations-taints/#topologykubernetesioregion)\non any Kubernetes node associated with the cluster of this mesh.",
+                  "type" : "string"
+                },
+                "version" : {
+                  "description" : "The version of the Mesh that has been installed, which is determined using the image tag on the\nmesh's primary control plane image (e.g. the istio-pilot image tag).",
+                  "type" : "string"
+                }
+              },
+              "type" : "object"
+            }
+          },
+          "type" : "object"
+        },
+        "istio" : {
+          "description" : "Describes an [Istio](https://istio.io/) service mesh.",
+          "properties" : {
+            "ingressGateways" : {
+              "description" : "DEPRECATED: external address data for an ingress gateway destination and workload live in the relevant Destination and Workload objects.\nDescribes the ingress gateway.",
+              "items" : {
+                "oneOf" : [ {
+                  "not" : {
+                    "anyOf" : [ {
+                      "required" : [ "dnsName" ]
+                    }, {
+                      "required" : [ "ip" ]
+                    } ]
+                  }
+                }, {
+                  "required" : [ "dnsName" ]
+                }, {
+                  "required" : [ "ip" ]
+                } ],
+                "properties" : {
+                  "dnsName" : {
+                    "description" : "Will be populated if the LoadBalancer Address is a DNS name",
+                    "type" : "string"
+                  },
+                  "externalAddress" : {
+                    "description" : "DEPRECATED: in favor of dns_name or external_ip",
+                    "type" : "string"
+                  },
+                  "externalTlsPort" : {
+                    "description" : "The externally-reachable port on which the gateway is listening for TLS connections.\nThis will be the port used for cross-cluster connectivity.\nSee the list of [common ports used by Istio](https://istio.io/latest/docs/ops/deployment/requirements/#ports-used-by-istio).\nDefaults to 15443 (or the NodePort) of the Kubernetes service (depending on its type).",
+                    "maximum" : 4.294967295E9,
+                    "minimum" : 0.0,
+                    "type" : "integer"
+                  },
+                  "ip" : {
+                    "description" : "Will be populated if the LoadBalancer Address is an IP",
+                    "type" : "string"
+                  },
+                  "name" : {
+                    "description" : "TODO: remove name and namespace as ingress gw info now contains a ref\nThe name of the Ingress Gateway Service",
+                    "type" : "string"
+                  },
+                  "namespace" : {
+                    "description" : "The namespace in which the ingress gateway is running.",
+                    "type" : "string"
+                  },
+                  "tlsContainerPort" : {
+                    "description" : "Container port on which the gateway is listening for TLS connections.\nDefaults to 15443.",
+                    "maximum" : 4.294967295E9,
+                    "minimum" : 0.0,
+                    "type" : "integer"
+                  },
+                  "workloadLabels" : {
+                    "additionalProperties" : {
+                      "type" : "string"
+                    },
+                    "description" : "The ingress service selector labels for the gateway.\n[Defaults to](https://github.com/istio/istio/blob/ab6cc48134a698d7ad218a83390fe27e8098919f/pkg/config/constants/constants.go#L73) `{\"istio\": \"ingressgateway\"}`.",
+                    "type" : "object"
+                  }
+                },
+                "type" : "object"
+              },
+              "type" : "array"
+            },
+            "installation" : {
+              "description" : "Describes the Istio control plane deployment.",
+              "properties" : {
+                "cluster" : {
+                  "description" : "The Gloo Mesh cluster in which the control plane has been installed.",
+                  "type" : "string"
+                },
+                "namespace" : {
+                  "description" : "Namespace in which the control plane has been installed.",
+                  "type" : "string"
+                },
+                "podLabels" : {
+                  "additionalProperties" : {
+                    "type" : "string"
+                  },
+                  "description" : "The labels on the control plane pods (read from the deployment).",
+                  "type" : "object"
+                },
+                "region" : {
+                  "description" : "The region of the cluster in which the control plane has been installed, which is\ndetermined from the value of the [Kubernetes region topology label](https://kubernetes.io/docs/reference/labels-annotations-taints/#topologykubernetesioregion)\non any Kubernetes node associated with the cluster of this mesh.",
+                  "type" : "string"
+                },
+                "version" : {
+                  "description" : "The version of the Mesh that
